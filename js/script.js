@@ -3,7 +3,7 @@
  ******************/
 
 // set EXCLUDE_PRE_SKILLCRUSH to true to exclude repos created before cutoff
-const EXCLUDE_PRE_SKILLCRUSH = false;
+const EXCLUDE_PRE_SKILLCRUSH = true;
 const cutoff = new Date("2022-08-01");
 
 const username = "bgiobbe";
