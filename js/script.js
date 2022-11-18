@@ -2,7 +2,9 @@
  * Global variables
  ******************/
 
+// set EXCLUDE_PRE_SKILLCRUSH to true to exclude repos created before cutoff
 const EXCLUDE_PRE_SKILLCRUSH = false;
+const cutoff = new Date("2022-08-01");
 
 const username = "bgiobbe";
 const urlBase = "https://api.github.com";
@@ -17,11 +19,14 @@ const repoUrlBase = `${urlBase}/repos/${username}/`;
 const overview = document.querySelector(".overview");
 // repos section
 const reposSection = document.querySelector("section.repos");
+// search-by-name input
+const filterInput = document.querySelector("input.filter-repos");
 // unordered list in repos section
 const repoList = document.querySelector("ul.repo-list");
 // repo-data section
 const repoDataSection = document.querySelector("section.repo-data");
-
+// back-to-repo-gallery button
+const backButton = document.querySelector("button.view-repos");
 
 /*
  * main()
@@ -90,8 +95,11 @@ const fetchAndDisplayRepos =  async function () {
  * 		repos    array of repo objects
  */
 const displayReposList = function (repos) {
-	const cutoff = new Date("2022-08-01");
 	//console.log("repos list", repos);
+	
+	// clear the search box
+	filterInput.value = "";
+	
 	for (let repo of repos) {
 		if (!EXCLUDE_PRE_SKILLCRUSH) {
 			addRepoToList(repo);
@@ -116,6 +124,9 @@ const addRepoToList = function (repo) {
 	repoList.appendChild(li);
 };
 
+/*
+ * Repo list click event listener
+ */
 repoList.addEventListener("click", function (e) {
 	// could get h3 or ul; only want the h3's
 	if (e.target.matches("h3")) {
@@ -139,7 +150,7 @@ const fetchAndDisplay1Repo =  async function (nameOfRepo) {
 		console.log(`fetch ${nameOfRepo} repo: request failed with status=${response.status}.`);
 	}
 	const repoInfo = await response.json();
-	console.log(`${nameOfRepo} repo`, repoInfo);
+	//console.log(`${nameOfRepo} repo`, repoInfo);
 
 	const fetchLanguages = await fetch(repoInfo.languages_url);
 	const languageData = await fetchLanguages.json();
@@ -172,9 +183,39 @@ const displayRepo = function (repo, languages) {
 	`;
 	repoDataSection.appendChild(div);
 	repoDataSection.classList.remove("hide");
+	backButton.classList.remove("hide");
 	// hide the repos section
 	reposSection.classList.add("hide");
 };
+
+/*
+ * Back button click event listener
+ */
+backButton.addEventListener("click", function (e) {
+	// hide repo data and back buttton
+	repoDataSection.classList.add("hide");
+	backButton.classList.add("hide");
+	// show repos list section
+	reposSection.classList.remove("hide");
+});
+
+/*
+ * Search box input event listener
+ */
+filterInput.addEventListener("input", function (e) {
+	const searchStr = filterInput.value.toLowerCase();
+	//console.log("search box:", searchStr);
+	const repos = repoList.querySelectorAll(".repo");
+	for (let repo of repos) {
+		const lcName = repo.innerText.toLowerCase();
+		if (lcName.includes(searchStr)) {
+			repo.classList.remove("hide");
+		} else {
+			repo.classList.add("hide");
+		}
+	}
+});
+
 
 // run it!
 main();
