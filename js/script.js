@@ -3,7 +3,7 @@
  ******************/
 
 // set EXCLUDE_PRE_SKILLCRUSH to true to exclude repos created before cutoff
-const EXCLUDE_PRE_SKILLCRUSH = true;
+const EXCLUDE_PRE_SKILLCRUSH = false;
 const cutoff = new Date("2022-08-01");
 
 const username = "bgiobbe";
@@ -76,7 +76,7 @@ const displayUserInfo = function (user) {
  * and display it
  */
 const fetchAndDisplayRepos =  async function () {
-    const url = reposEndpoint + "?sort=updated&direction=desc&per_page=100";
+    const url = reposEndpoint + "?sort=created&direction=desc&per_page=100";
 	const response = await fetch(url);
 	if (response.status != "200") {
 		console.log(`fetch repos list: request failed with status=${response.status}.`);
